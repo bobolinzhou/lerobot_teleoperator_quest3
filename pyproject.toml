@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lerobot_teleoperator_quest3"
+version = "0.1.0"
+description = "Meta Quest 3 ROS 2 teleoperator plugin for LeRobot"
+requires-python = ">=3.10,<3.11"
+dependencies = [
+    "lerobot>=0.4.4,<0.5.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["lerobot_teleoperator_quest3*"]
