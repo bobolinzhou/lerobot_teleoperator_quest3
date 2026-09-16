@@ -1,15 +1,22 @@
 # LeRobot Quest 3 Teleoperator
 
-`lerobot_teleoperator_quest3` is a third-party [LeRobot](https://github.com/huggingface/lerobot) teleoperator plugin that receives Meta Quest 3 teleoperation targets from ROS 2 and exposes them as LeRobot actions for a Piper robot adapter.
+`lerobot_teleoperator_quest3` is a third-party [LeRobot](https://github.com/huggingface/lerobot) teleoperator plugin that receives joint targets from ROS 2 and exposes them as LeRobot actions for a Piper robot adapter. It was developed and tested with a Meta Quest 3 teleoperation pipeline, but the plugin itself is not tied to Quest 3 hardware.
 
 The plugin does not connect to the Quest headset directly. A separate ROS 2 teleoperation/IK pipeline must publish the target joint state consumed by this package.
+
+## Publisher-independent input
+
+The source of the ROS 2 data can be any device or program. For example, `/control/joint_states` may be published by a Quest 3 pipeline, another VR headset, a joystick or keyboard controller, MoveIt, a simulator, a motion-capture system, another robot, or a custom planning node.
+
+The publisher implementation and hardware do not matter to this plugin. Only the ROS 2 interface contract matters: messages must use `sensor_msgs/msg/JointState`, contain the configured joint names, and use the units documented below. In other words, the **publisher may be arbitrary, but the message type and data format are not arbitrary**.
 
 ## Data flow
 
 ```text
-Meta Quest 3 controller
+Any control source
+(Quest 3, other VR, simulator, planner, etc.)
         ↓
-ROS 2 pose and IK nodes
+ROS 2 publisher / optional IK nodes
         ↓  /control/joint_states
 lerobot_teleoperator_quest3
         ↓  LeRobot action dictionary
