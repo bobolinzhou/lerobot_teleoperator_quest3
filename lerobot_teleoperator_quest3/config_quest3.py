@@ -31,5 +31,7 @@ class Quest3Config(TeleoperatorConfig):
         "Gripper.pos"
     ])
 
-    stale_action_timeout: float = 0.2  # seconds
-
+    # Service exposed by pub_delta_pose.py. It stops Cartesian target
+    # publishing and re-anchors the next A-start at the current TCP pose.
+    stop_teleop_service: str = "/quest3/stop_teleop"
+    stop_teleop_service_timeout_s: float = 2.0

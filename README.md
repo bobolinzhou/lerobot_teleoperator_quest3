@@ -138,7 +138,9 @@ ros2 topic echo --once /control/joint_states
 ros2 topic hz /control/joint_states
 ```
 
-The default stale-action timeout is `0.2` seconds. If the ROS publisher stops or becomes too slow, `get_action()` raises an error instead of returning an old target.
+During an active episode, `get_action()` is non-blocking and returns the most
+recent ROS target. This keeps LeRobot's sampling loop independent of small
+timing differences between the ROS publisher and the dataset FPS.
 
 ## LeRobot registration
 
@@ -165,3 +167,12 @@ Re-run `pip install --no-deps -e .` only after changing package metadata, depend
 ## Safety
 
 Verify joint names, units, joint limits, gripper range, and emergency-stop behavior before enabling a physical robot. Test the ROS-to-LeRobot conversion without sending actions to the arm first.
+
+## Episode reset handshake
+
+For Piper-H automatic reset, the Quest-only launch exposes
+`/quest3/stop_teleop` (`std_srvs/srv/Trigger`). At the end of every episode,
+LeRobot uses this service to stop Cartesian target publishing before moving
+the arm to its fixed reset pose. Once the arm reaches that pose, LeRobot clears
+the previous target. After the environment-reset interval, recording waits for
+a fresh A-button target; the episode timer does not start until it arrives.
